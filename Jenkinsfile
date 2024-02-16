@@ -58,6 +58,9 @@ pipeline {
         }
 
         stage('Run tests') {
+            environment {
+                ARTIFACT_NAME = 'webapp' // Asegúrate de que coincide con el nombre de tu aplicación
+            }
             steps {
                 script {
                     // Componer el nombre de la imagen usando DOCKER_USERNAME de Jenkins
