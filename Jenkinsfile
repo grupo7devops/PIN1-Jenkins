@@ -11,6 +11,8 @@ pipeline {
 
   environment {
     VERSION_FILE = 'package.json'
+    DOCKERHUB_USERNAME = credentials('dockerhub-username')
+    DOCKERHUB_PASSWORD = credentials('dockerhub-password')
   }
 
   stages {
@@ -32,9 +34,12 @@ pipeline {
             env.VERSION = version
 
             // Docker login
-            if (pinVarsInstance.dockerLogin('https://registry.example.com')) {
-              pinVarsInstance.buildDockerImage("${DOCKER_USER}/pinapp", "${version}", '.')
-            }
+              pinVarsInstance.dockerHubLogin(DOCKERHUB_USERNAME, DOCKERHUB_PASSWORD)
+
+
+            // Docker build
+              pinVarsInstance.buildDockerImage("${(DOCKERHUB_USERNAME}/pinapp", "${version}", '.')
+           
           }catch (Exception e) {
             echo "Error en la etapa de Build: ${e.message}"
             currentBuild.result = 'FAILURE'
@@ -56,7 +61,6 @@ pipeline {
           try {
             // Docker logindef loggedIn = pinVarsInstance.dockerLogin('https://registry.example.com')
 
-                
             if (pinVarsInstance.dockerLogin('https://registry.example.com')) {
               pinVarsInstance.pushDockerImage("${DOCKER_USER}/pinapp", "${env.VERSION}", '.')
             }
