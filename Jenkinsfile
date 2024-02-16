@@ -8,7 +8,7 @@ pipeline {
     }
 
     environment {
-        VERSION_FILE = 'package.json'
+        VERSION_FILE = './package.json'
     }
 
     stages {
