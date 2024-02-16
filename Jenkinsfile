@@ -35,7 +35,7 @@ pipeline {
             
               sh '''
                 ls -la
-                docker build -t $imageName:$version .
+                docker build -t grupo7devops/pin1app:1.0.0 .
             '''
             
 
