@@ -27,7 +27,7 @@ pipeline {
         stage('Building image') {
             environment {
                 DOCKER_USERNAME = "${DOCKER_USERNAME}"
-                ARTIFACT_NAME = 'webapp'
+                ARTIFACT_NAME = 'webapp' // Asegúrate de que coincide con el nombre de tu aplicación
                 VERSION_FILE = 'package.json'
             }
             steps {
@@ -71,7 +71,7 @@ pipeline {
 
         stage('Deploy') {
             environment {
-                ARTIFACT_NAME = 'webapp'
+                ARTIFACT_NAME = 'webapp' // Asegúrate de que coincide con el nombre de tu aplicación
             }
             steps {
                 script {
