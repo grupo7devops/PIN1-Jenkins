@@ -12,7 +12,6 @@ pipeline {
   environment {
     VERSION_FILE = 'package.json'
     DOCKER_USER = credentials('dockerHub')
-    
   }
 
   stages {
@@ -21,6 +20,10 @@ pipeline {
         script {
           try {
             echo "Extrayendo la versión de ${VERSION_FILE}"
+
+            // traza de depuración
+            def version = sh(script: "jq -r '.version' ${VERSION_FILE}", returnStdout: true).trim()
+            echo "Versión encontrada en el package.json: ${version}"
 
             // utilizamos jq para extraer la versión
             def version = sh(script: "jq -r '.version' ${VERSION_FILE}", returnStdout: true).trim()
@@ -33,11 +36,22 @@ pipeline {
 
             env.VERSION = version
 
+            //traza de depuración
+            echo "DOCKER_USER: ${DOCKER_USER}"
+            echo "VERSION: ${VERSION}"
+
+            // traza de depuración para la construcción de la imagen
+            sh """
+                            ls -la
+                            docker build -t ${DOCKER_USER}/pin1app:${version} .
+                        """
+
               // Docker login
               if (pinVarsInstance.dockerLogin('https://registry-1.docker.io/v2/')) {
+              //traza de depuración para la etapa de Deploy
+              echo "Realizando deploy con DOCKER_USER: ${DOCKER_USER}, VERSION: ${env.VERSION}"
               pinVarsInstance.buildDockerImage("${DOCKER_USER}/pin1app", "${version}")
               }
-
           }catch (Exception e) {
             echo "Error en la etapa de Build: ${e.message}"
             currentBuild.result = 'FAILURE'
