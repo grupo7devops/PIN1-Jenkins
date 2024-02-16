@@ -66,9 +66,6 @@ pipeline {
             // Componer el nombre de la imagen usando DOCKER_USERNAME de Jenkins
             def imageName = "${DOCKER_USERNAME}/${ARTIFACT_NAME}:${env.ARTIFACT_VERSION}"
 
-            // Imprime la información sobre el contenido del contenedor antes de ejecutar las pruebas
-            sh "docker run --rm ${imageName} ls -R /app"
-
             // Ejecutar pruebas en la imagen construida
             sh "docker run --rm ${imageName} npm test"
         }
