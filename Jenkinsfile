@@ -11,8 +11,8 @@ pipeline {
 
   environment {
     VERSION_FILE = 'package.json'
-    DOCKERHUB_USERNAME = credentials('dockerhub-username')
-    DOCKERHUB_PASSWORD = credentials('dockerhub-password')
+    DOCKERHUB_USERNAME = credentials('dockerHub')
+    DOCKERHUB_PASSWORD = credentials('dockerHub')
   }
 
   stages {
