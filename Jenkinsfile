@@ -38,7 +38,8 @@ pipeline {
 
 
             // Docker build
-              pinVarsInstance.buildDockerImage("${(DOCKERHUB_USERNAME}/pinapp", "${version}", '.')
+              pinVarsInstance.buildDockerImage("${DOCKERHUB_USERNAME}/pinapp", "${version}", '.')
+
            
           }catch (Exception e) {
             echo "Error en la etapa de Build: ${e.message}"
