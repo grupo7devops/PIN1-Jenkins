@@ -31,11 +31,14 @@ pipeline {
             echo "Versión encontrada en el package.json: ${version}"
 
             env.VERSION = version
-            
+
             // Docker login
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}"
                 }
+
+                // docker build
+                pinVarsInstance.buildDockerImage("${DOCKER_USER}/pin1app", "${version}")
           }catch (Exception e) {
             echo "Error en la etapa de Build: ${e.message}"
             currentBuild.result = 'FAILURE'
