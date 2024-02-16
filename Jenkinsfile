@@ -25,7 +25,6 @@ pipeline {
 
         stage('Building image') {
             environment {
-                DOCKER_REGISTRY_URL = 'https://registry.example.com'
                 ARTIFACT_NAME = 'pin1app'
                 VERSION_FILE = 'package.json'
             }
@@ -58,7 +57,6 @@ pipeline {
 
         stage('Deploy') {
             environment {
-                DOCKER_REGISTRY_URL = 'https://registry.example.com'
                 ARTIFACT_NAME = 'pin1app'
             }
             steps {
@@ -71,3 +69,4 @@ pipeline {
         }
     }
 }
+
