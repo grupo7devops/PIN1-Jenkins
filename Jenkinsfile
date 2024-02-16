@@ -26,6 +26,7 @@ pipeline {
 
         stage('Building image') {
             environment {
+                DOCKER_USERNAME = "${DOCKER_USERNAME}"
                 ARTIFACT_NAME = 'pin1app'
                 VERSION_FILE = 'package.json'
             }
@@ -52,6 +53,18 @@ pipeline {
                         currentBuild.result = 'FAILURE'
                         error 'Hubo un error durante la etapa de Build.'
                     }
+                }
+            }
+        }
+
+        stage('Run tests') {
+            steps {
+                script {
+                    // Componer el nombre de la imagen usando DOCKER_USERNAME de Jenkins
+                    def imageName = "${DOCKER_USERNAME}/${ARTIFACT_NAME}:${env.ARTIFACT_VERSION}"
+                    
+                    // Ejecutar pruebas en la imagen construida
+                    sh "docker run --rm ${imageName} npm test"
                 }
             }
         }
