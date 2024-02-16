@@ -33,7 +33,7 @@ pipeline {
 
             // Docker login
             withCredentials([usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
-              sh """docker login -u \${DOCKER_USER} -p \${DOCKER_PASSWORD}"""
+              sh 'docker login -u $DOCKER_USER -p $DOCKER_PASSWORD'
             }
 
             // docker build
