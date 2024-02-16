@@ -1,7 +1,5 @@
 @Library('pinVars') _
 
-def pinVarsInstance = load 'DockerHelper.groovy'
-
 pipeline {
     agent any
 
@@ -18,20 +16,22 @@ pipeline {
             steps {
                 script {
                     try {
-                        def version = sh(script: "jq -r '.version' ${VERSION_FILE}", returnStdout: true).trim()
+                        node { 
+                            def version = sh(script: "jq -r '.version' ${VERSION_FILE}", returnStdout: true).trim()
 
-                        if (!version) {
-                            error 'No se encontró la versión en el package.json.'
-                        }
+                            if (!version) {
+                                error 'No se encontró la versión en el package.json.'
+                            }
 
-                        echo "Versión encontrada en el package.json: ${version}"
+                            echo "Versión encontrada en el package.json: ${version}"
 
-                        env.VERSION = version
+                            env.VERSION = version
 
-                        // Docker login, build, and push
-                        if (pinVarsInstance.dockerLogin('https://registry.example.com')) {
-                            pinVarsInstance.buildAndPushDockerImage("${DOCKER_USER}/pin1app", "${version}", '.')
-                        }
+                            // Docker login, build, and push
+                            if (pinVars.dockerLogin('https://registry.example.com')) {
+                                pinVars.buildAndPushDockerImage("${DOCKER_USER}/pin1app", "${version}", '.')
+                            }
+                        } // fin bloque node
                     } catch (Exception e) {
                         echo "Error en la etapa de Build y Deploy: ${e.message}"
                         currentBuild.result = 'FAILURE'
