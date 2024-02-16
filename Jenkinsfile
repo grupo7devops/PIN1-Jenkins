@@ -32,8 +32,8 @@ pipeline {
             env.VERSION = version
 
             // Docker login
-            withCredentials([usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
-              sh 'docker login -u $DOCKER_USER -p $DOCKER_PASSWORD'
+            if (dockerBuildDeployInstance.dockerLogin('https://registry.example.com')) {
+              dockerBuildDeployInstance.buildDockerImage("${DOCKER_USER}/result", "${version}")
             }
 
             // docker build
