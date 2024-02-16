@@ -35,8 +35,8 @@ pipeline {
             env.VERSION = version
 
               // Docker login
-              if (dockerBuildDeployInstance.dockerLogin('https://registry-1.docker.io/v2/')) {
-              dockerBuildDeployInstance.buildDockerImage("${DOCKER_USER}/pin1app", "${version}")
+              if (pinVarsInstance.dockerLogin('https://registry-1.docker.io/v2/')) {
+              pinVarsInstance.buildDockerImage("${DOCKER_USER}/pin1app", "${version}")
               }
 
           }catch (Exception e) {
