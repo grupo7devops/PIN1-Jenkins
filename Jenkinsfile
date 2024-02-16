@@ -17,6 +17,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        DOCKER_USERNAME = env.DOCKER_USERNAME
                         pinVarsInstance.dockerLogin(DOCKER_REGISTRY_URL, 'dockerHub')
                     }
                 }
@@ -25,7 +26,6 @@ pipeline {
 
         stage('Building image') {
             environment {
-                DOCKER_USERNAME = "${DOCKER_USERNAME}"
                 ARTIFACT_NAME = 'pin1app'
                 VERSION_FILE = 'package.json'
             }
