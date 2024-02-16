@@ -1,44 +1,72 @@
-@Library('pinVars') _
+@Library('pinVars') _  //se invoca libreria
+
+def pinVarsInstance = pinVars() //se crea instancia para poder utilizar las funciones
 
 pipeline {
-    agent any
+  agent any
 
-    options {
-        timeout(time: 2, unit: 'MINUTES')
-    }
+  options {
+    timeout(time: 2, unit: 'MINUTES')
+  }
 
-    environment {
-        VERSION_FILE = './package.json'
-    }
+  environment {
+    VERSION_FILE = 'package.json'
+  }
 
-    stages {
-        stage('Build and Deploy') {
-            steps {
-                script {
-                    try {
-                        node { 
-                            def version = sh(script: "jq -r '.version' ${VERSION_FILE}", returnStdout: true).trim()
+  stages {
+    stage('Building image') {
+      steps {
+        script {
+          try {
+            echo "Extrayendo la versión de ${VERSION_FILE}"
 
-                            if (!version) {
-                                error 'No se encontró la versión en el package.json.'
-                            }
+            // utilizamos jq para extraer la versión
+            def version = sh(script: "jq -r '.version' ${VERSION_FILE}", returnStdout: true).trim()
 
-                            echo "Versión encontrada en el package.json: ${version}"
-
-                            env.VERSION = version
-
-                            // Docker login, build, and push
-                            if (pinVars.dockerLogin('https://registry.example.com')) {
-                                pinVars.buildAndPushDockerImage("${DOCKER_USER}/pin1app", "${version}", '.')
-                            }
-                        } // fin bloque node
-                    } catch (Exception e) {
-                        echo "Error en la etapa de Build y Deploy: ${e.message}"
-                        currentBuild.result = 'FAILURE'
-                        error 'Hubo un error durante la etapa de Build y Deploy.'
-                    }
-                }
+            if (!version) {
+              error 'No se encontró la versión en el package.json.'
             }
+
+            echo "Versión encontrada en el package.json: ${version}"
+
+            env.VERSION = version
+
+            // Docker login
+            if (pinVarsInstance.dockerLogin('https://registry.example.com')) {
+              pinVarsInstance.buildDockerImage("${DOCKER_USER}/pin1app", "${version}")
+            }
+
+          }catch (Exception e) {
+            echo "Error en la etapa de Build: ${e.message}"
+            currentBuild.result = 'FAILURE'
+            error 'Hubo un error durante la etapa de Build.'
+          }
         }
+      }
     }
+
+    // stage('Run tests') {
+    //   steps {
+    //     sh "docker run testapp npm test"
+    //   }
+    // }
+
+    stage('Deploy') {
+      steps {
+        script {
+          try {
+            // Docker logindef loggedIn = pinVarsInstance.dockerLogin('https://registry.example.com')
+
+            if (pinVarsInstance.dockerLogin('https://registry.example.com')) {
+              pinVarsInstance.pushDockerImage("${DOCKER_USER}/pinapp", "${env.VERSION}", '.')
+            }
+                    } catch (Exception e) {
+            echo "Error en la etapa de Deploy: ${e.message}"
+            currentBuild.result = 'FAILURE'
+            error 'Hubo un error durante la etapa de Deploy.'
+          }
+        }
+      }
+        } // fin stage deploy
+  }
 }
