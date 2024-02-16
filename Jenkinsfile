@@ -31,12 +31,11 @@ pipeline {
             echo "Versión encontrada en el package.json: ${version}"
 
             env.VERSION = version
-
-              // Docker login
-              if (pinVarsInstance.dockerLogin('https://registry-1.docker.io/v2/')) {
-              pinVarsInstance.buildDockerImage("${DOCKER_USER}/pin1app", "${version}")
-              }
-
+            
+            // Docker login
+                withCredentials([usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}"
+                }
           }catch (Exception e) {
             echo "Error en la etapa de Build: ${e.message}"
             currentBuild.result = 'FAILURE'
