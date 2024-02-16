@@ -16,7 +16,7 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         pinVarsInstance.dockerLogin(DOCKER_REGISTRY_URL, 'dockerHub')
                     }
                 }
@@ -43,8 +43,8 @@ pipeline {
 
                         env.ARTIFACT_VERSION = version
 
-                        // Componer el nombre de la imagen usando DOCKER_USER de Jenkins
-                        def imageName = "${DOCKER_USER}/${ARTIFACT_NAME}:${env.ARTIFACT_VERSION}"
+                        // Componer el nombre de la imagen usando DOCKER_USERNAME de Jenkins
+                        def imageName = "${DOCKER_USERNAME}/${ARTIFACT_NAME}:${env.ARTIFACT_VERSION}"
                         pinVarsInstance.buildDockerImage(imageName)
                     } catch (Exception e) {
                         echo "Error en la etapa de Build: ${e.message}"
@@ -61,8 +61,8 @@ pipeline {
             }
             steps {
                 script {
-                    // Componer el nombre de la imagen usando DOCKER_USER de Jenkins
-                    def imageName = "${DOCKER_USER}/${ARTIFACT_NAME}:${env.ARTIFACT_VERSION}"
+                    // Componer el nombre de la imagen usando DOCKER_USERNAME de Jenkins
+                    def imageName = "${DOCKER_USERNAME}/${ARTIFACT_NAME}:${env.ARTIFACT_VERSION}"
                     pinVarsInstance.pushDockerImage(imageName)
                 }
             }
@@ -70,3 +70,27 @@ pipeline {
     }
 }
 
+// pinVars.groovy
+
+def call() {
+    def pinVars = [:]
+
+    pinVars.dockerLogin = { registryUrl, credentialsId ->
+        withCredentials([usernamePassword(credentialsId: credentialsId, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            withDockerRegistry([url: registryUrl]) {
+                return true
+            }
+        }
+        return false
+    }
+
+    pinVars.buildDockerImage = { imageName ->
+        sh "docker build -t ${imageName} ."
+    }
+
+    pinVars.pushDockerImage = { imageName ->
+        sh "docker push ${imageName}"
+    }
+
+    return pinVars
+}
