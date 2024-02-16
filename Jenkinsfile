@@ -61,9 +61,9 @@ pipeline {
           try {
             // Docker logindef loggedIn = pinVarsInstance.dockerLogin('https://registry.example.com')
 
-            if (pinVarsInstance.dockerLogin('https://registry.example.com')) {
-              pinVarsInstance.pushDockerImage("${DOCKER_USER}/pinapp", "${env.VERSION}", '.')
-            }
+            
+              pinVarsInstance.pushDockerImage()
+           
                     } catch (Exception e) {
             echo "Error en la etapa de Deploy: ${e.message}"
             currentBuild.result = 'FAILURE'
