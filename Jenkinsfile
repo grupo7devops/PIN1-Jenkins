@@ -11,6 +11,7 @@ pipeline {
 
   environment {
     VERSION_FILE = 'package.json'
+    DOCKER_USER = credentials('dockerHub')
     
   }
 
