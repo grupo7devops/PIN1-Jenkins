@@ -36,8 +36,6 @@ pipeline {
               dockerBuildDeployInstance.buildDockerImage("${DOCKER_USER}/result", "${version}")
             }
 
-            // docker build
-            pinVarsInstance.buildDockerImage("${DOCKER_USER}/pin1app", "${version}")
           }catch (Exception e) {
             echo "Error en la etapa de Build: ${e.message}"
             currentBuild.result = 'FAILURE'
