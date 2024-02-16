@@ -13,6 +13,7 @@ pipeline {
         DOCKER_REGISTRY_URL = 'https://registry.example.com'
         ARTIFACT_NAME = 'pin1app'
         VERSION_FILE = 'package.json'
+        DOCKER_USER = credentials('dockerHub').username
     }
 
     stages {
