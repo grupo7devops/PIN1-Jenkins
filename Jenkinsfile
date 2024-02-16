@@ -36,7 +36,7 @@ pipeline {
               pinVarsInstance.dockerHubLogin(DOCKERHUB_USERNAME, DOCKERHUB_PASSWORD)
 
               // Docker build
-              if (dockerBuildDeployInstance.dockerLogin('https://registry.example.com')) {
+              if (dockerBuildDeployInstance.dockerLogin('https://registry-1.docker.io/v2/')) {
               dockerBuildDeployInstance.buildDockerImage("${DOCKER_USER}/pin1app", "${version}")
               }
 
